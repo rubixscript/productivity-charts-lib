@@ -221,6 +221,34 @@ export interface StatsGridProps {
 }
 
 /**
+ * Props for ReadingStreakGraph component
+ */
+export interface ReadingStreakGraphProps {
+  // Required data
+  history: number[]; // Array of numbers representing daily reading pages
+
+  // Grid configuration
+  numRows?: number;
+  numCols?: number;
+  squareSize?: number;
+  gap?: number;
+
+  // Theming
+  theme?: Partial<ChartTheme>;
+  darkMode?: boolean;
+
+  // Display options
+  title?: string;
+
+  // Callbacks
+  onSquarePress?: (value: number, index: number) => void;
+
+  // Style
+  style?: any;
+  containerStyle?: any;
+}
+
+/**
  * Animation configuration
  */
 export interface ChartAnimationConfig {
