@@ -37,10 +37,11 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
     switch (size) {
       case 'small':
         return {
-          iconSize: 20,
-          iconContainerSize: 40,
-          valueSize: 24,
-          labelSize: 10,
+          iconSize: 18,
+          iconContainerSize: 36,
+          valueSize: 20,
+          labelSize: 9,
+          padding: 12,
         };
       case 'large':
         return {
@@ -48,6 +49,7 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           iconContainerSize: 56,
           valueSize: 36,
           labelSize: 13,
+          padding: 24,
         };
       default:
         return {
@@ -55,6 +57,7 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           iconContainerSize: 48,
           valueSize: 28,
           labelSize: 11,
+          padding: 20,
         };
     }
   }, [size]);
@@ -76,6 +79,7 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
             height: sizeConfig.iconContainerSize,
             backgroundColor: finalIconBgColor,
             borderColor: `${theme.primaryColor}40`,
+            marginBottom: size === 'small' ? 6 : 12,
           },
         ]}
       >
@@ -123,12 +127,13 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
 
       {/* Progress Bar (if provided) */}
       {progress !== undefined && (
-        <View style={styles.progressBarContainer}>
+        <View style={[styles.progressBarContainer, { marginTop: size === 'small' ? 8 : 12 }]}>
           <View
             style={[
               styles.progressBarBackground,
               {
                 backgroundColor: `${finalProgressColor}20`,
+                height: size === 'small' ? 4 : 6,
               },
             ]}
           >
@@ -156,6 +161,7 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           backgroundColor: theme.cardBackgroundColor,
           borderColor: theme.borderColor,
           shadowColor: theme.shadowColor,
+          padding: sizeConfig.padding,
         },
         style,
       ]}
@@ -171,8 +177,8 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     borderRadius: 20,
-    padding: 20,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -216,10 +222,8 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     width: '100%',
-    marginTop: 12,
   },
   progressBarBackground: {
-    height: 6,
     borderRadius: 3,
     overflow: 'hidden',
   },

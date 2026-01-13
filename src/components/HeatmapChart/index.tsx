@@ -35,7 +35,36 @@ const HeatmapChart: React.FC<HeatmapChartProps> = ({
   // Merge custom theme with default
   const theme: ChartTheme = useMemo(() => {
     const baseTheme = darkMode ? DEFAULT_DARK_THEME : DEFAULT_LIGHT_THEME;
-    return { ...baseTheme, ...customTheme };
+    const mergedTheme = { ...baseTheme, ...customTheme };
+
+    // If custom primaryColor is provided, generate intensityColors dynamically
+    if (customTheme?.primaryColor && customTheme.primaryColor !== baseTheme.primaryColor) {
+      const primaryColor = customTheme.primaryColor;
+      const hexToRgba = (hex: string, alpha: number): string => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      };
+
+      mergedTheme.intensityColors = darkMode
+        ? [
+            hexToRgba(primaryColor, 0.12),
+            hexToRgba(primaryColor, 0.3),
+            hexToRgba(primaryColor, 0.5),
+            hexToRgba(primaryColor, 0.7),
+            hexToRgba(primaryColor, 0.9),
+          ] as [string, string, string, string, string]
+        : [
+            hexToRgba(primaryColor, 0.2),
+            hexToRgba(primaryColor, 0.4),
+            hexToRgba(primaryColor, 0.6),
+            hexToRgba(primaryColor, 0.8),
+            primaryColor,
+          ] as [string, string, string, string, string];
+    }
+
+    return mergedTheme;
   }, [darkMode, customTheme]);
 
   const getIntensityColor = (intensity: number): string => {

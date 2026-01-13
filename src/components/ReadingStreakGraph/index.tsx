@@ -31,20 +31,30 @@ const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
   const totalDays = numRows * numCols;
   const calculatedSquareSize = squareSize || 12;
 
-  // Get color based on reading pages
+  // Helper function to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number): string => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Get color based on reading pages using theme primary color
   const getColor = (value: number): string => {
+    const primaryColor = theme.primaryColor;
+
     if (darkMode) {
       if (value === 0) return 'rgba(60, 60, 60, 0.8)';
-      if (value < 5) return 'rgba(139, 92, 246, 0.3)';
-      if (value < 15) return 'rgba(139, 92, 246, 0.5)';
-      if (value < 25) return 'rgba(139, 92, 246, 0.7)';
-      return 'rgba(139, 92, 246, 1)';
+      if (value < 5) return hexToRgba(primaryColor, 0.3);
+      if (value < 15) return hexToRgba(primaryColor, 0.5);
+      if (value < 25) return hexToRgba(primaryColor, 0.7);
+      return hexToRgba(primaryColor, 1);
     } else {
       if (value === 0) return '#EBEDF0';
-      if (value < 5) return '#E9D5FF';
-      if (value < 15) return '#C4B5FD';
-      if (value < 25) return '#A78BFA';
-      return '#8B5CF6';
+      if (value < 5) return hexToRgba(primaryColor, 0.2);
+      if (value < 15) return hexToRgba(primaryColor, 0.4);
+      if (value < 25) return hexToRgba(primaryColor, 0.6);
+      return primaryColor;
     }
   };
 
@@ -73,37 +83,39 @@ const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
         )}
 
         {/* Streak Grid */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          <View style={[styles.streakContainer, { gap }]}>
-            {Array.from({ length: numRows }).map((_, rowIndex) => (
-              <View key={rowIndex} style={[styles.streakRow, { gap }]}>
-                {Array.from({ length: numCols }).map((_, colIndex) => {
-                  const index = rowIndex * numCols + colIndex;
-                  const pagesRead = squares[index];
-                  return (
-                    <TouchableOpacity
-                      key={colIndex}
-                      disabled={!onSquarePress}
-                      onPress={() => onSquarePress?.(pagesRead, index)}
-                      style={[
-                        styles.streakSquare,
-                        {
-                          width: calculatedSquareSize,
-                          height: calculatedSquareSize,
-                          backgroundColor: getColor(pagesRead),
-                        },
-                      ]}
-                    />
-                  );
-                })}
-              </View>
-            ))}
-          </View>
-        </ScrollView>
+        <View style={styles.scrollWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            <View style={[styles.streakContainer, { gap }]}>
+              {Array.from({ length: numRows }).map((_, rowIndex) => (
+                <View key={rowIndex} style={[styles.streakRow, { gap }]}>
+                  {Array.from({ length: numCols }).map((_, colIndex) => {
+                    const index = rowIndex * numCols + colIndex;
+                    const pagesRead = squares[index];
+                    return (
+                      <TouchableOpacity
+                        key={colIndex}
+                        disabled={!onSquarePress}
+                        onPress={() => onSquarePress?.(pagesRead, index)}
+                        style={[
+                          styles.streakSquare,
+                          {
+                            width: calculatedSquareSize,
+                            height: calculatedSquareSize,
+                            backgroundColor: getColor(pagesRead),
+                          },
+                        ]}
+                      />
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
 
         {/* Legend */}
         <View style={styles.legend}>
@@ -148,11 +160,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  scrollWrapper: {
+    width: '100%',
+    alignItems: 'center',
+  },
   scrollContent: {
     flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   streakContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
   },
   streakRow: {
     flexDirection: 'row',

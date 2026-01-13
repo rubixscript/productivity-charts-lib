@@ -13,6 +13,21 @@ export default function App() {
   const [showLabels, setShowLabels] = useState(true);
   const [animated, setAnimated] = useState(true);
   const [squareSize, setSquareSize] = useState(14);
+  const [numRows, setNumRows] = useState(4);
+  const [primaryColor, setPrimaryColor] = useState('#8B5CF6');
+
+  const colorOptions = [
+    { name: 'Purple', value: '#8B5CF6' },
+    { name: 'Blue', value: '#3B82F6' },
+    { name: 'Green', value: '#10B981' },
+    { name: 'Pink', value: '#EC4899' },
+    { name: 'Orange', value: '#F97316' },
+    { name: 'Red', value: '#EF4444' },
+    { name: 'Teal', value: '#14B8A6' },
+    { name: 'Indigo', value: '#6366F1' },
+    { name: 'Yellow', value: '#F59E0B' },
+    { name: 'Cyan', value: '#06B6D4' },
+  ];
   // Sample reading history data (84 days of reading pages - 12 weeks)
   const sampleReadingHistory = [
     0, 5, 12, 8, 0, 15, 22,
@@ -57,18 +72,28 @@ export default function App() {
     { label: 'Sun', value: 6 },
   ];
 
+  const customTheme = {
+    primaryColor: primaryColor,
+    secondaryColor: `${primaryColor}CC`,
+    accentColor: primaryColor,
+  };
+
+  // Calculate number of columns based on rows to show ~84 days
+  const numCols = Math.ceil(84 / numRows);
+
   const renderChart = () => {
     switch (selectedChart) {
       case 'reading':
         return (
           <ReadingStreakGraph
             history={sampleReadingHistory}
-            numRows={7}
-            numCols={12}
+            numRows={numRows}
+            numCols={numCols}
             squareSize={squareSize}
             gap={3}
             title="Daily Reading Progress"
             darkMode={darkMode}
+            theme={customTheme}
             onSquarePress={(value, index) => {
               console.log(`Day ${index + 1}: ${value} pages read`);
             }}
@@ -86,6 +111,7 @@ export default function App() {
             cellGap={3}
             weeksToShow={12}
             darkMode={darkMode}
+            theme={customTheme}
             onDayPress={(day) => {
               console.log(`Clicked: ${day.dateStr}, Value: ${day.value}`);
             }}
@@ -105,6 +131,7 @@ export default function App() {
             barWidth={28}
             chartHeight={200}
             darkMode={darkMode}
+            theme={customTheme}
             onBarPress={(data, index) => {
               console.log(`${data.label}: ${data.value} sessions`);
             }}
@@ -122,6 +149,7 @@ export default function App() {
                 subtitle="This week"
                 progress={0.65}
                 darkMode={darkMode}
+                theme={customTheme}
                 size="small"
                 style={styles.cardSquare}
               />
@@ -132,6 +160,7 @@ export default function App() {
                 subtitle="Days"
                 progress={0.85}
                 darkMode={darkMode}
+                theme={customTheme}
                 size="small"
                 style={styles.cardSquare}
               />
@@ -144,6 +173,7 @@ export default function App() {
                 subtitle="This month"
                 progress={0.45}
                 darkMode={darkMode}
+                theme={customTheme}
                 size="small"
                 style={styles.cardSquare}
               />
@@ -154,6 +184,7 @@ export default function App() {
                 subtitle="Goals"
                 progress={0.89}
                 darkMode={darkMode}
+                theme={customTheme}
                 size="small"
                 style={styles.cardSquare}
               />
@@ -196,9 +227,30 @@ export default function App() {
             <Switch
               value={darkMode}
               onValueChange={setDarkMode}
-              trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
-              thumbColor={darkMode ? '#A78BFA' : '#F3F4F6'}
+              trackColor={{ false: '#D1D5DB', true: primaryColor }}
+              thumbColor={darkMode ? primaryColor : '#F3F4F6'}
             />
+          </View>
+
+          <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
+            <Text style={[styles.settingLabel, darkMode && styles.textDark, { marginBottom: 12 }]}>Primary Color</Text>
+            <View style={styles.colorPickerRow}>
+              {colorOptions.map((color) => (
+                <TouchableOpacity
+                  key={color.value}
+                  style={[
+                    styles.colorOption,
+                    { backgroundColor: color.value },
+                    primaryColor === color.value && styles.colorOptionSelected,
+                  ]}
+                  onPress={() => setPrimaryColor(color.value)}
+                >
+                  {primaryColor === color.value && (
+                    <Text style={styles.colorCheckmark}>✓</Text>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
           {selectedChart === 'heatmap' && (
@@ -207,8 +259,8 @@ export default function App() {
               <Switch
                 value={showLabels}
                 onValueChange={setShowLabels}
-                trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
-                thumbColor={showLabels ? '#A78BFA' : '#F3F4F6'}
+                trackColor={{ false: '#D1D5DB', true: primaryColor }}
+                thumbColor={showLabels ? primaryColor : '#F3F4F6'}
               />
             </View>
           )}
@@ -219,8 +271,8 @@ export default function App() {
               <Switch
                 value={animated}
                 onValueChange={setAnimated}
-                trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
-                thumbColor={animated ? '#A78BFA' : '#F3F4F6'}
+                trackColor={{ false: '#D1D5DB', true: primaryColor }}
+                thumbColor={animated ? primaryColor : '#F3F4F6'}
               />
             </View>
           )}
@@ -228,20 +280,40 @@ export default function App() {
           {selectedChart === 'reading' && (
             <>
               <View style={styles.settingRow}>
+                <Text style={[styles.settingLabel, darkMode && styles.textDark]}>
+                  Grid: {numRows} rows × {numCols} cols ({numRows * numCols} days)
+                </Text>
+              </View>
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: primaryColor }]}
+                  onPress={() => setNumRows(Math.max(4, numRows - 1))}
+                >
+                  <Text style={styles.buttonText}>- Row</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: primaryColor }]}
+                  onPress={() => setNumRows(Math.min(12, numRows + 1))}
+                >
+                  <Text style={styles.buttonText}>+ Row</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.settingRow}>
                 <Text style={[styles.settingLabel, darkMode && styles.textDark]}>Square Size: {squareSize}px</Text>
               </View>
               <View style={styles.buttonRow}>
                 <TouchableOpacity
-                  style={[styles.button, darkMode && styles.buttonDark]}
+                  style={[styles.button, { backgroundColor: primaryColor }]}
                   onPress={() => setSquareSize(Math.max(10, squareSize - 2))}
                 >
-                  <Text style={[styles.buttonText, darkMode && styles.buttonTextDark]}>-</Text>
+                  <Text style={styles.buttonText}>Smaller</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.button, darkMode && styles.buttonDark]}
+                  style={[styles.button, { backgroundColor: primaryColor }]}
                   onPress={() => setSquareSize(Math.min(20, squareSize + 2))}
                 >
-                  <Text style={[styles.buttonText, darkMode && styles.buttonTextDark]}>+</Text>
+                  <Text style={styles.buttonText}>Larger</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -356,36 +428,59 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   button: {
-    backgroundColor: '#8B5CF6',
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
     flex: 1,
     alignItems: 'center',
-  },
-  buttonDark: {
-    backgroundColor: '#A78BFA',
+    justifyContent: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
-  buttonTextDark: {
-    color: '#1A1A1A',
+  colorPickerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  colorOption: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: 'transparent',
+  },
+  colorOptionSelected: {
+    borderColor: '#FFFFFF',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  colorCheckmark: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
   },
   cardsGrid: {
-    gap: 12,
+    width: '100%',
   },
   cardsRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 0,
+    marginBottom: 12,
   },
   cardSquare: {
     flex: 1,
     aspectRatio: 1,
     minWidth: 0,
+    maxWidth: '48%',
   },
   chartContainer: {
     marginBottom: 16,
