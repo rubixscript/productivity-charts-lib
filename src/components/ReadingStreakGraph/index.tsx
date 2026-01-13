@@ -5,7 +5,7 @@
  */
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { ReadingStreakGraphProps, ChartTheme, DEFAULT_LIGHT_THEME, DEFAULT_DARK_THEME } from '../../types';
 
 const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
@@ -73,31 +73,37 @@ const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
         )}
 
         {/* Streak Grid */}
-        <View style={[styles.streakContainer, { gap }]}>
-          {Array.from({ length: numRows }).map((_, rowIndex) => (
-            <View key={rowIndex} style={[styles.streakRow, { gap }]}>
-              {Array.from({ length: numCols }).map((_, colIndex) => {
-                const index = rowIndex * numCols + colIndex;
-                const pagesRead = squares[index];
-                return (
-                  <TouchableOpacity
-                    key={colIndex}
-                    disabled={!onSquarePress}
-                    onPress={() => onSquarePress?.(pagesRead, index)}
-                    style={[
-                      styles.streakSquare,
-                      {
-                        width: calculatedSquareSize,
-                        height: calculatedSquareSize,
-                        backgroundColor: getColor(pagesRead),
-                      },
-                    ]}
-                  />
-                );
-              })}
-            </View>
-          ))}
-        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={[styles.streakContainer, { gap }]}>
+            {Array.from({ length: numRows }).map((_, rowIndex) => (
+              <View key={rowIndex} style={[styles.streakRow, { gap }]}>
+                {Array.from({ length: numCols }).map((_, colIndex) => {
+                  const index = rowIndex * numCols + colIndex;
+                  const pagesRead = squares[index];
+                  return (
+                    <TouchableOpacity
+                      key={colIndex}
+                      disabled={!onSquarePress}
+                      onPress={() => onSquarePress?.(pagesRead, index)}
+                      style={[
+                        styles.streakSquare,
+                        {
+                          width: calculatedSquareSize,
+                          height: calculatedSquareSize,
+                          backgroundColor: getColor(pagesRead),
+                        },
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
 
         {/* Legend */}
         <View style={styles.legend}>
@@ -141,6 +147,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   streakContainer: {
     alignItems: 'center',
