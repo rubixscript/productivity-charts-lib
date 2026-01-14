@@ -40,7 +40,6 @@ export default {
     'react-native',
     'react-native-svg',
     'react-native-gifted-charts',
-    'react-native-linear-gradient',
     'expo-linear-gradient',
     'expo-blur',
     '@expo/vector-icons',
