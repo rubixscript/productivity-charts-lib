@@ -11,7 +11,10 @@
       "Bash(npx @react-native-community/cli@latest init ExampleApp --directory example-app --skip-install)",
       "Bash(npx create-expo-app@latest example-app --template blank)",
       "Bash(npm install:*)",
-      "Bash(npx expo install:*)"
+      "Bash(npx expo install:*)",
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

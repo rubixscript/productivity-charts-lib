@@ -8,6 +8,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { MonthlyChartProps, ChartTheme, DEFAULT_LIGHT_THEME, DEFAULT_DARK_THEME } from '../../types';
+import ChartSummary from '../shared/ChartSummary';
 
 const MonthlyChart: React.FC<MonthlyChartProps> = ({
   months,
@@ -136,14 +137,13 @@ const MonthlyChart: React.FC<MonthlyChartProps> = ({
         </View>
 
         {/* Total Summary */}
-        <View style={styles.summaryContainer}>
-          <Text style={[styles.summaryLabel, { color: theme.secondaryTextColor }]}>
-            Total {valueLabel}:
-          </Text>
-          <Text style={[styles.summaryValue, { color: theme.textColor }]}>
-            {monthlyData.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
-          </Text>
-        </View>
+        <ChartSummary
+          label={`Total ${valueLabel}`}
+          value={monthlyData.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
+          labelColor={theme.secondaryTextColor}
+          valueColor={theme.textColor}
+          borderColor={`${theme.primaryColor}15`}
+        />
       </View>
     </View>
   );
@@ -179,24 +179,6 @@ const styles = StyleSheet.create({
   chartContainer: {
     alignItems: 'flex-start',
     overflow: 'visible',
-  },
-  summaryContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(139, 92, 246, 0.15)',
-  },
-  summaryLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  summaryValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    letterSpacing: -0.5,
   },
 });
 
