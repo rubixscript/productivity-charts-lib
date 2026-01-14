@@ -296,6 +296,62 @@ const sessions = [
 const heatmapDays = generateHeatmapData(sessions, 150, 8);
 ```
 
+### Generate Month Labels
+
+```tsx
+import { generateMonthLabels } from '@rubixscript/react-native-productivity-charts';
+
+const months = generateMonthLabels(
+  new Date('2025-01-01'),
+  new Date('2025-12-31')
+);
+// Returns: [{ name: 'Jan', year: 2025, index: 0 }, ...]
+```
+
+### Group Data by Period
+
+```tsx
+import { groupByPeriod } from '@rubixscript/react-native-productivity-charts';
+
+// Get daily data (last 7 days by default)
+const dailyData = groupByPeriod(days, 'daily');
+
+// Get weekly data
+const weeklyData = groupByPeriod(days, 'weekly');
+
+// Get monthly data
+const monthlyData = groupByPeriod(days, 'monthly');
+```
+
+### Get Daily Chart Data
+
+```tsx
+import { getDailyChartData } from '@rubixscript/react-native-productivity-charts';
+
+// Get last N days of data
+const last7Days = getDailyChartData(days, 7);
+const last30Days = getDailyChartData(days, 30);
+```
+
+### Get Weekly Chart Data
+
+```tsx
+import { getWeeklyChartData } from '@rubixscript/react-native-productivity-charts';
+
+// Get aggregated weekly data (last 12 weeks by default)
+const weeklyData = getWeeklyChartData(days);
+```
+
+### Calculate Intensity
+
+```tsx
+import { calculateIntensity } from '@rubixscript/react-native-productivity-charts';
+
+// Calculate intensity level (0-1) from a value
+const intensity = calculateIntensity(10, 8); // Returns: 1.0 (capped at 1)
+const intensity2 = calculateIntensity(4, 8);  // Returns: 0.5
+```
+
 ### Calculate Statistics
 
 ```tsx
