@@ -33,6 +33,7 @@ export default {
       declaration: true,
       declarationDir: 'dist',
       exclude: ['**/*.test.ts', '**/*.test.tsx', 'example-app/**/*'],
+      jsx: 'react',
     }),
   ],
   external: [
