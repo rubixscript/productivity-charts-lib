@@ -12,11 +12,18 @@
       "Bash(npx create-expo-app@latest example-app --template blank)",
       "Bash(npm install:*)",
       "Bash(npx expo install:*)",
+<<<<<<< HEAD
       "Bash(npm whoami)",
       "Bash(npm login)",
       "Bash(npm run build:*)",
       "Bash(npm publish:*)",
       "Bash(npm config set:*)"
+=======
+      "Bash(tree:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm ls:*)"
+>>>>>>> 1b5687a9a41a7a94486d56108bfaefbae33c0b76
     ]
   }
 }

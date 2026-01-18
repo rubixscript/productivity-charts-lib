@@ -5,10 +5,11 @@
  */
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ProgressCardProps, ChartTheme, DEFAULT_LIGHT_THEME, DEFAULT_DARK_THEME } from '../../types';
+import IconSection from './IconSection';
+import ProgressBar from './ProgressBar';
+import ContentSection from './ContentSection';
 
 const ProgressCard: React.FC<ProgressCardProps> = ({
   icon,
@@ -42,6 +43,9 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           valueSize: 20,
           labelSize: 9,
           padding: 12,
+          iconMarginBottom: 6,
+          barMarginTop: 8,
+          barHeight: 4,
         };
       case 'large':
         return {
@@ -50,6 +54,9 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           valueSize: 36,
           labelSize: 13,
           padding: 24,
+          iconMarginBottom: 12,
+          barMarginTop: 12,
+          barHeight: 6,
         };
       default:
         return {
@@ -58,6 +65,9 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
           valueSize: 28,
           labelSize: 11,
           padding: 20,
+          iconMarginBottom: 12,
+          barMarginTop: 12,
+          barHeight: 6,
         };
     }
   }, [size]);
@@ -67,90 +77,6 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
   const finalProgressColor = progressColor || theme.primaryColor;
 
   const CardWrapper = onPress ? TouchableOpacity : View;
-
-  const cardContent = (
-    <>
-      {/* Icon */}
-      <View
-        style={[
-          styles.iconContainer,
-          {
-            width: sizeConfig.iconContainerSize,
-            height: sizeConfig.iconContainerSize,
-            backgroundColor: finalIconBgColor,
-            borderColor: `${theme.primaryColor}40`,
-            marginBottom: size === 'small' ? 6 : 12,
-          },
-        ]}
-      >
-        <MaterialCommunityIcons name={icon as any} size={sizeConfig.iconSize} color={finalIconColor} />
-      </View>
-
-      {/* Content */}
-      <View style={styles.content}>
-        <Text
-          style={[
-            styles.value,
-            {
-              color: theme.textColor,
-              fontSize: sizeConfig.valueSize,
-            },
-          ]}
-        >
-          {value}
-        </Text>
-        <Text
-          style={[
-            styles.label,
-            {
-              color: theme.labelColor,
-              fontSize: sizeConfig.labelSize,
-            },
-          ]}
-        >
-          {label}
-        </Text>
-        {subtitle && (
-          <Text
-            style={[
-              styles.subtitle,
-              {
-                color: theme.secondaryTextColor,
-                fontSize: sizeConfig.labelSize - 1,
-              },
-            ]}
-          >
-            {subtitle}
-          </Text>
-        )}
-      </View>
-
-      {/* Progress Bar (if provided) */}
-      {progress !== undefined && (
-        <View style={[styles.progressBarContainer, { marginTop: size === 'small' ? 8 : 12 }]}>
-          <View
-            style={[
-              styles.progressBarBackground,
-              {
-                backgroundColor: `${finalProgressColor}20`,
-                height: size === 'small' ? 4 : 6,
-              },
-            ]}
-          >
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  width: `${Math.min(progress * 100, 100)}%`,
-                  backgroundColor: finalProgressColor,
-                },
-              ]}
-            />
-          </View>
-        </View>
-      )}
-    </>
-  );
 
   return (
     <CardWrapper
@@ -168,7 +94,35 @@ const ProgressCard: React.FC<ProgressCardProps> = ({
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
     >
-      {cardContent}
+      <IconSection
+        name={icon}
+        size={sizeConfig.iconSize}
+        iconColor={finalIconColor}
+        backgroundColor={finalIconBgColor}
+        borderColor={`${theme.primaryColor}40`}
+        marginBottom={sizeConfig.iconMarginBottom}
+      />
+
+      <ContentSection
+        value={value}
+        label={label}
+        subtitle={subtitle}
+        valueColor={theme.textColor}
+        labelColor={theme.labelColor}
+        subtitleColor={theme.secondaryTextColor}
+        valueSize={sizeConfig.valueSize}
+        labelSize={sizeConfig.labelSize}
+        subtitleSize={sizeConfig.labelSize - 1}
+      />
+
+      {progress !== undefined && (
+        <ProgressBar
+          progress={progress}
+          color={finalProgressColor}
+          height={sizeConfig.barHeight}
+          marginTop={sizeConfig.barMarginTop}
+        />
+      )}
     </CardWrapper>
   );
 };
@@ -193,43 +147,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-  },
-  iconContainer: {
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    borderWidth: 1,
-  },
-  content: {
-    alignItems: 'center',
-  },
-  value: {
-    fontWeight: '800',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  label: {
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontWeight: '500',
-    marginTop: 2,
-    textAlign: 'center',
-  },
-  progressBarContainer: {
-    width: '100%',
-  },
-  progressBarBackground: {
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: 3,
   },
 });
 

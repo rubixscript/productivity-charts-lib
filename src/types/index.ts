@@ -249,6 +249,62 @@ export interface ReadingStreakGraphProps {
 }
 
 /**
+ * Props for StatsCard component
+ */
+export interface StatsCardProps {
+  icon: string; // MaterialCommunityIcons name
+  value: number | string;
+  label: string;
+  theme?: Partial<ChartTheme>;
+  darkMode?: boolean;
+  style?: any;
+  containerStyle?: any;
+}
+
+/**
+ * Session data for hourly activity
+ */
+export interface SessionData {
+  endTime: Date;
+  phase: 'work' | 'break' | 'longBreak';
+}
+
+/**
+ * Props for HourlyActivityChart component
+ */
+export interface HourlyActivityChartProps {
+  sessions: SessionData[];
+  title?: string;
+  startHour?: number; // Default: 6
+  endHour?: number; // Default: 23
+  sampleInterval?: number; // Default: 3
+  theme?: Partial<ChartTheme>;
+  darkMode?: boolean;
+  onHourPress?: (hour: number, sessions: number) => void;
+  style?: any;
+  containerStyle?: any;
+}
+
+/**
+ * Props for FocusTimeSummary component
+ */
+export interface FocusTimeSummaryProps {
+  totalFocusTime: number; // in minutes
+  avgFocusTime: number; // in minutes
+  totalSessions: number;
+  weeklyData: Array<{ day: number; sessions: number }>;
+  monthlyData?: Array<{ day: number; sessions: number }>;
+  title?: string;
+  chartHeight?: number;
+  showPeriodToggle?: boolean;
+  theme?: Partial<ChartTheme>;
+  darkMode?: boolean;
+  onPeriodChange?: (period: 'weekly' | 'monthly') => void;
+  style?: any;
+  containerStyle?: any;
+}
+
+/**
  * Animation configuration
  */
 export interface ChartAnimationConfig {

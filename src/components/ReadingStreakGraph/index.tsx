@@ -5,8 +5,11 @@
  */
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { ReadingStreakGraphProps, ChartTheme, DEFAULT_LIGHT_THEME, DEFAULT_DARK_THEME } from '../../types';
+import StreakGrid from './StreakGrid';
+import StreakLegend from './StreakLegend';
+import { useStreakColors } from './useStreakColors';
 
 const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
   history,
@@ -31,32 +34,8 @@ const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
   const totalDays = numRows * numCols;
   const calculatedSquareSize = squareSize || 12;
 
-  // Helper function to convert hex to rgba
-  const hexToRgba = (hex: string, alpha: number): string => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-
-  // Get color based on reading pages using theme primary color
-  const getColor = (value: number): string => {
-    const primaryColor = theme.primaryColor;
-
-    if (darkMode) {
-      if (value === 0) return 'rgba(60, 60, 60, 0.8)';
-      if (value < 5) return hexToRgba(primaryColor, 0.3);
-      if (value < 15) return hexToRgba(primaryColor, 0.5);
-      if (value < 25) return hexToRgba(primaryColor, 0.7);
-      return hexToRgba(primaryColor, 1);
-    } else {
-      if (value === 0) return '#EBEDF0';
-      if (value < 5) return hexToRgba(primaryColor, 0.2);
-      if (value < 15) return hexToRgba(primaryColor, 0.4);
-      if (value < 25) return hexToRgba(primaryColor, 0.6);
-      return primaryColor;
-    }
-  };
+  // Get color function based on pages read
+  const getColor = useStreakColors({ primaryColor: theme.primaryColor, darkMode });
 
   // Prepare display history
   const displayHistory = history.slice(-totalDays);
@@ -83,58 +62,18 @@ const ReadingStreakGraph: React.FC<ReadingStreakGraphProps> = ({
         )}
 
         {/* Streak Grid */}
-        <View style={styles.scrollWrapper}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            <View style={[styles.streakContainer, { gap }]}>
-              {Array.from({ length: numRows }).map((_, rowIndex) => (
-                <View key={rowIndex} style={[styles.streakRow, { gap }]}>
-                  {Array.from({ length: numCols }).map((_, colIndex) => {
-                    const index = rowIndex * numCols + colIndex;
-                    const pagesRead = squares[index];
-                    return (
-                      <TouchableOpacity
-                        key={colIndex}
-                        disabled={!onSquarePress}
-                        onPress={() => onSquarePress?.(pagesRead, index)}
-                        style={[
-                          styles.streakSquare,
-                          {
-                            width: calculatedSquareSize,
-                            height: calculatedSquareSize,
-                            backgroundColor: getColor(pagesRead),
-                          },
-                        ]}
-                      />
-                    );
-                  })}
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-        </View>
+        <StreakGrid
+          squares={squares}
+          numRows={numRows}
+          numCols={numCols}
+          squareSize={calculatedSquareSize}
+          gap={gap}
+          getColor={getColor}
+          onSquarePress={onSquarePress}
+        />
 
         {/* Legend */}
-        <View style={styles.legend}>
-          <Text style={[styles.legendText, { color: theme.labelColor }]}>Less</Text>
-          {[0, 3, 10, 20, 30].map((val, index) => (
-            <View
-              key={index}
-              style={[
-                styles.legendSquare,
-                {
-                  backgroundColor: getColor(val),
-                  width: 12,
-                  height: 12,
-                },
-              ]}
-            />
-          ))}
-          <Text style={[styles.legendText, { color: theme.labelColor }]}>More</Text>
-        </View>
+        <StreakLegend getColor={getColor} labelColor={theme.labelColor} />
       </View>
     </View>
   );
@@ -159,40 +98,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '600',
-  },
-  scrollWrapper: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  streakContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  streakRow: {
-    flexDirection: 'row',
-  },
-  streakSquare: {
-    borderRadius: 3,
-  },
-  legend: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
-    gap: 4,
-  },
-  legendText: {
-    fontSize: 9,
-    fontWeight: '600',
-  },
-  legendSquare: {
-    marginHorizontal: 2,
-    borderRadius: 3,
   },
 });
 
