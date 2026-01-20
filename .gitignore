@@ -31,3 +31,6 @@ coverage/
 
 # Temporary files
 tmpclaude-*-cwd
+
+# NPM tokens
+npm_token.txt
