@@ -6,6 +6,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "start": "npm run start --prefix example-app",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "jest",
